@@ -4,9 +4,9 @@ export interface Transaction {
   id: string;
   timestamp: Date;
   clientPublicKey: string;
-  verificationStatus: 'success' | 'failed';
-  amount?: number;
-  type: 'encryption' | 'decryption' | 'signature';
+  verificationStatus: 'success' | 'failed' | 'pending';
+  transactionType: string;
+  responseTime: number;
 }
 
 export interface AuditLog {
@@ -54,6 +54,8 @@ export const mockUsers: User[] = [
 export const generateMockTransactions = (count: number = 100): Transaction[] => {
   const transactions: Transaction[] = [];
   const now = new Date();
+  const statuses: ('success' | 'failed' | 'pending')[] = ['success', 'failed', 'pending'];
+  const types = ['encryption', 'decryption', 'signing', 'verification'];
   
   for (let i = 0; i < count; i++) {
     const daysAgo = Math.floor(Math.random() * 7);
@@ -66,12 +68,12 @@ export const generateMockTransactions = (count: number = 100): Transaction[] => 
     timestamp.setMinutes(timestamp.getMinutes() - minutesAgo);
     
     transactions.push({
-      id: `tx_${i + 1}`,
+      id: `tx_${Math.random().toString(36).substr(2, 9)}`,
       timestamp,
-      clientPublicKey: `0x${Math.random().toString(16).substr(2, 40)}`,
-      verificationStatus: Math.random() > 0.1 ? 'success' : 'failed',
-      amount: Math.floor(Math.random() * 1000) + 1,
-      type: ['encryption', 'decryption', 'signature'][Math.floor(Math.random() * 3)] as any
+      clientPublicKey: `pk_${Math.random().toString(36).substr(2, 20)}`,
+      verificationStatus: statuses[Math.floor(Math.random() * statuses.length)],
+      transactionType: types[Math.floor(Math.random() * types.length)],
+      responseTime: Math.floor(Math.random() * 500) + 50
     });
   }
   
@@ -94,7 +96,7 @@ export const generateMockAuditLogs = (count: number = 50): AuditLog[] => {
     logs.push({
       id: `log_${i + 1}`,
       timestamp,
-      clientPublicKey: `0x${Math.random().toString(16).substr(2, 40)}`,
+      clientPublicKey: `pk_${Math.random().toString(36).substr(2, 20)}`,
       action: ['AES_ENCRYPT', 'AES_DECRYPT', 'SIGNATURE_VERIFY'][Math.floor(Math.random() * 3)],
       status: Math.random() > 0.05 ? 'success' : 'failed',
       encryptionTime: Math.random() * 10 + 1,
@@ -109,16 +111,16 @@ export const generateMockAuditLogs = (count: number = 50): AuditLog[] => {
 export const mockKeyMetadata: KeyMetadata[] = [
   {
     id: 'key_1',
-    publicKey: '0x04a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7',
+    publicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJbYcVOlqjJJQKU9fX2y3sT8N9yZq1KxG',
     isActive: true,
     rotationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days ago
   },
   {
     id: 'key_2',
-    publicKey: '0x04b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8',
+    publicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzRvOnQL6LKp9fX2y3sT8N9yZq1KxH',
     isActive: false,
-    rotationDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+    rotationDate: new Date(Date.now() + 37 * 24 * 60 * 60 * 1000), // 37 days from now
     createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
   }
 ];

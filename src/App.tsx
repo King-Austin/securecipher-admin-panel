@@ -7,6 +7,12 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CryptoAdmin from "./pages/CryptoAdmin";
 import Dashboard from "./components/crypto-admin/Dashboard";
+import KeyManagement from "./components/crypto-admin/KeyManagement";
+import TransactionsPage from "./components/crypto-admin/TransactionsPage";
+import AnalyticsPage from "./components/crypto-admin/AnalyticsPage";
+import SecurityPage from "./components/crypto-admin/SecurityPage";
+import SettingsPage from "./components/crypto-admin/SettingsPage";
+import LogsPage from "./components/crypto-admin/LogsPage";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -20,14 +26,14 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/crypto-admin/*" element={<CryptoAdmin />}>
+            <Route path="/crypto-admin" element={<CryptoAdmin />}>
               <Route index element={<Dashboard />} />
-              <Route path="keys" element={<div>Key Management (Coming Soon)</div>} />
-              <Route path="transactions" element={<div>Transactions (Coming Soon)</div>} />
-              <Route path="logs" element={<div>Verification Logs (Coming Soon)</div>} />
-              <Route path="analytics" element={<div>Analytics (Coming Soon)</div>} />
-              <Route path="security" element={<div>Security (Coming Soon)</div>} />
-              <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
+              <Route path="keys" element={<KeyManagement />} />
+              <Route path="transactions" element={<TransactionsPage />} />
+              <Route path="logs" element={<LogsPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="security" element={<SecurityPage />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
