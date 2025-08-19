@@ -10,12 +10,18 @@ export const LoginForm = () => {
   const [password, setPassword] = useState('');
   const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(username, password)) {
-      toast.success('Login successful');
-    } else {
-      toast.error('Invalid credentials');
+    try {
+      const success = await login(username, password);
+      if (success) {
+        toast.success('✅ Login successful');
+      } else {
+        toast.error('❌ Invalid username or password');
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error('⚠️ Something went wrong. Please try again.');
     }
   };
 

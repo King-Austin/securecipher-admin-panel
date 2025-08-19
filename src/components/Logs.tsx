@@ -1,24 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Search, Download } from 'lucide-react';
-import { mockData } from '../data/mockData';
 import { format } from 'date-fns';
 
+interface AuditLog {
+  id: string;
+  transaction_id: string;
+  event_type: string;
+  details: Record<string, any>;
+  actor: string;
+  timestamp: string;
+  prev_hash: string;
+  record_hash: string;
+}
+
 const Logs = () => {
+  const [logs, setLogs] = useState<AuditLog[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const itemsPerPage = 20;
 
-  const filteredLogs = mockData.auditLogs.filter(log => {
-    const matchesSearch = log.clientPublicKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         log.action.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || log.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  useEffect(() => {
+    const storedLogs = localStorage.getItem('dashboardData');
+    if (storedLogs) {
+      const parsed = JSON.parse(storedLogs);
+      if (Array.isArray(parsed.audit_logs)) {
+        setLogs(parsed.audit_logs);
+      }
+    }
+  }, []);
+
+  const filteredLogs = logs.filter(log => 
+    log.transaction_id.includes(searchTerm) || 
+    log.event_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    log.actor.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const paginatedLogs = filteredLogs.slice(
     (currentPage - 1) * itemsPerPage,
@@ -26,7 +45,6 @@ const Logs = () => {
   );
 
   const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
-  const shortenKey = (key: string) => `${key.substring(0, 10)}...${key.substring(key.length - 6)}`;
 
   return (
     <div className="space-y-6">
@@ -48,16 +66,6 @@ const Logs = () => {
                 className="pl-8"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="success">Success</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-              </SelectContent>
-            </Select>
             <Button variant="outline" className="flex items-center gap-2">
               <Download className="h-4 w-4" />
               Export
@@ -70,37 +78,29 @@ const Logs = () => {
               <thead>
                 <tr className="border-b">
                   <th className="text-left p-2">Timestamp</th>
-                  <th className="text-left p-2">Client Key</th>
-                  <th className="text-left p-2">Action</th>
-                  <th className="text-left p-2">Status</th>
-                  <th className="text-left p-2">Enc. Time</th>
-                  <th className="text-left p-2">Dec. Time</th>
+                  <th className="text-left p-2">Transaction ID</th>
+                  <th className="text-left p-2">Event Type</th>
+                  <th className="text-left p-2">Actor</th>
+                  <th className="text-left p-2">Details</th>
+                  <th className="text-left p-2">Record Hash</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedLogs.map((log) => (
+                {paginatedLogs.map(log => (
                   <tr key={log.id} className="border-b hover:bg-muted/50">
-                    <td className="p-2">{format(log.timestamp, 'MMM dd, HH:mm:ss')}</td>
+                    <td className="p-2">{format(new Date(log.timestamp), 'MMM dd, HH:mm:ss')}</td>
+                    <td className="p-2"><code className="text-xs bg-muted px-1 py-0.5 rounded">{log.transaction_id}</code></td>
+                    <td className="p-2">{log.event_type}</td>
+                    <td className="p-2">{log.actor}</td>
                     <td className="p-2">
                       <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                        {shortenKey(log.clientPublicKey)}
+                        {JSON.stringify(log.details)}
                       </code>
                     </td>
-                    <td className="p-2">{log.action}</td>
                     <td className="p-2">
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        log.status === 'success' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {log.status}
-                      </span>
-                    </td>
-                    <td className="p-2">
-                      {log.encryptionTime ? `${log.encryptionTime.toFixed(2)}ms` : '-'}
-                    </td>
-                    <td className="p-2">
-                      {log.decryptionTime ? `${log.decryptionTime.toFixed(2)}ms` : '-'}
+                      <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                        {log.record_hash.substring(0, 10)}...{log.record_hash.slice(-6)}
+                      </code>
                     </td>
                   </tr>
                 ))}

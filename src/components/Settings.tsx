@@ -7,33 +7,37 @@ import { Settings as SettingsIcon, Save } from 'lucide-react';
 
 const Settings = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto px-4 py-6">
+      {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">Configure system settings and preferences</p>
+        <h1 className="text-2xl md:text-3xl font-bold">Settings</h1>
+        <p className="text-sm text-muted-foreground">
+          Configure system preferences and security policies
+        </p>
       </div>
 
+      {/* General Settings */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <SettingsIcon className="h-5 w-5" />
-            General Settings
+            General
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">System Name</label>
+              <label className="text-sm font-medium">System Name</label>
               <Input defaultValue="SecureCipher Admin" />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Administrator Email</label>
+              <label className="text-sm font-medium">Admin Email</label>
               <Input defaultValue="admin@securecypher.com" />
             </div>
           </div>
-          
+
           <div>
-            <label className="text-sm font-medium mb-2 block">Timezone</label>
+            <label className="text-sm font-medium">Timezone</label>
             <Select defaultValue="utc">
               <SelectTrigger>
                 <SelectValue />
@@ -49,79 +53,83 @@ const Settings = () => {
         </CardContent>
       </Card>
 
+      {/* Notifications */}
       <Card>
-        <CardHeader>
-          <CardTitle>Notification Settings</CardTitle>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Notifications</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="font-medium">Email Notifications</label>
-              <p className="text-sm text-muted-foreground">Receive email alerts for security events</p>
+        <CardContent className="space-y-3">
+          {[
+            {
+              title: "Email Notifications",
+              desc: "Receive alerts for important events",
+              checked: true,
+            },
+            {
+              title: "Failed Transaction Alerts",
+              desc: "Warn if failure rate > 5%",
+              checked: true,
+            },
+            {
+              title: "Key Rotation Reminders",
+              desc: "Notify 7 days before rotation",
+              checked: true,
+            },
+          ].map((item, idx) => (
+            <div key={idx} className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">{item.title}</p>
+                <p className="text-xs text-muted-foreground">{item.desc}</p>
+              </div>
+              <Switch defaultChecked={item.checked} />
             </div>
-            <Switch defaultChecked />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="font-medium">Failed Transaction Alerts</label>
-              <p className="text-sm text-muted-foreground">Alert when transaction failure rate exceeds 5%</p>
-            </div>
-            <Switch defaultChecked />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="font-medium">Key Rotation Reminders</label>
-              <p className="text-sm text-muted-foreground">Remind 7 days before key rotation</p>
-            </div>
-            <Switch defaultChecked />
-          </div>
+          ))}
         </CardContent>
       </Card>
 
+      {/* Data Retention */}
       <Card>
-        <CardHeader>
-          <CardTitle>Data Retention</CardTitle>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Data Retention</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="text-sm font-medium mb-2 block">Transaction Log Retention (days)</label>
+            <label className="text-sm font-medium">Transactions (days)</label>
             <Input type="number" defaultValue="90" />
           </div>
-          
           <div>
-            <label className="text-sm font-medium mb-2 block">Audit Log Retention (days)</label>
+            <label className="text-sm font-medium">Audit Logs (days)</label>
             <Input type="number" defaultValue="365" />
           </div>
-          
           <div>
-            <label className="text-sm font-medium mb-2 block">Key History Retention (days)</label>
+            <label className="text-sm font-medium">Key History (days)</label>
             <Input type="number" defaultValue="730" />
           </div>
         </CardContent>
       </Card>
 
+      {/* Maintenance */}
       <Card>
-        <CardHeader>
-          <CardTitle>System Maintenance</CardTitle>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">System Maintenance</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Button variant="outline" className="w-full">
-            Export Configuration
+            Export Config
           </Button>
           <Button variant="outline" className="w-full">
-            Import Configuration
+            Import Config
           </Button>
           <Button variant="outline" className="w-full">
             Clear Cache
           </Button>
           <Button variant="destructive" className="w-full">
-            Reset to Factory Defaults
+            Factory Reset
           </Button>
         </CardContent>
       </Card>
 
+      {/* Save Button */}
       <div className="flex justify-end">
         <Button className="flex items-center gap-2">
           <Save className="h-4 w-4" />

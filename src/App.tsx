@@ -7,7 +7,6 @@ import KeyManagement from "./components/KeyManagement";
 import Transactions from "./components/Transactions";
 import Analytics from "./components/Analytics";
 import Security from "./components/Security";
-import Settings from "./components/Settings";
 import Logs from "./components/Logs";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -24,7 +23,6 @@ const App = () => (
           <Route path="logs" element={<Logs />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="security" element={<Security />} />
-          <Route path="settings" element={<Settings />} />
         </Route>
         <Route path="*" element={<div className="flex items-center justify-center min-h-screen text-xl">Page Not Found</div>} />
       </Routes>

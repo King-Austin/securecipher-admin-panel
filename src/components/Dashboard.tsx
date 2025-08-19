@@ -4,8 +4,41 @@ import { VerificationLogTable } from './VerificationLogTable';
 import { PerformanceStats } from './PerformanceStats';
 import { mockData } from '../data/mockData';
 import { format } from 'date-fns';
+import { useState, useEffect } from 'react';
 
 const Dashboard = () => {
+
+    const [dashboardData, setDashboardData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/admin/', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch dashboard data');
+
+        const data = await response.json();
+        setDashboardData(data);
+
+        // Save in localStorage
+        localStorage.setItem('dashboardData', JSON.stringify(data));
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+
+        // fallback to stored cache if API fails
+        const cached = localStorage.getItem('dashboardData');
+        if (cached) setDashboardData(JSON.parse(cached));
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+
   const today = new Date();
   const todayTransactions = mockData.transactions.filter(t => 
     t.timestamp.toDateString() === today.toDateString()
