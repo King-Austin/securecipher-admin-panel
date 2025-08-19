@@ -9,29 +9,40 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { mockData } from '../data/mockData';
-import { format, subDays, startOfDay } from 'date-fns';
+import { format, subHours, startOfHour } from 'date-fns';
+import { useState, useEffect } from 'react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export const TransactionChart = () => {
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = startOfDay(subDays(new Date(), 6 - i));
-    const dayTransactions = mockData.transactions.filter(t => 
-      startOfDay(t.timestamp).getTime() === date.getTime()
-    );
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  useEffect(() => {
+    const dashboardDataStr = localStorage.getItem('dashboardData');
+    if (dashboardDataStr) {
+      const dashboardData = JSON.parse(dashboardDataStr);
+      setTransactions(dashboardData.transactions || []);
+    }
+  }, []);
+
+  // Last 24 hours, hourly
+  const last24Hours = Array.from({ length: 24 }, (_, i) => {
+    const hour = startOfHour(subHours(new Date(), 23 - i));
+    const count = transactions.filter(
+      t => startOfHour(new Date(t.created_at)).getTime() === hour.getTime()
+    ).length;
     return {
-      date: format(date, 'MMM dd'),
-      count: dayTransactions.length
+      hourLabel: format(hour, 'HH:00'),
+      count,
     };
   });
 
   const chartData = {
-    labels: last7Days.map(d => d.date),
+    labels: last24Hours.map(d => d.hourLabel),
     datasets: [
       {
-        label: 'Daily Transactions',
-        data: last7Days.map(d => d.count),
+        label: 'Transactions per Hour',
+        data: last24Hours.map(d => d.count),
         backgroundColor: 'hsl(var(--primary))',
         borderColor: 'hsl(var(--primary))',
         borderWidth: 1,
@@ -42,27 +53,19 @@ export const TransactionChart = () => {
   const options = {
     responsive: true,
     plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: false,
-      },
+      legend: { position: 'top' as const },
+      title: { display: false },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 1,
-        },
-      },
+      y: { beginAtZero: true, ticks: { stepSize: 1 } },
+      x: { title: { display: true, text: 'Hour' } },
     },
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Transaction Volume (Last 7 Days)</CardTitle>
+        <CardTitle>Transaction Volume (Last 24 Hours)</CardTitle>
       </CardHeader>
       <CardContent>
         <Bar data={chartData} options={options} />

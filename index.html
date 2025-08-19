@@ -2,23 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>cipher-dash-monitor</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <!-- Viewport prevents user zooming and ensures mobile responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SecureCipher Admin Dashboard</title>
 
-    <meta property="og:title" content="cipher-dash-monitor" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <!-- Favicon -->
+    <link rel="icon" href="/securecipher.png" type="image/x-icon" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <!-- Optional Tailwind / Global CSS -->
+    <link rel="stylesheet" href="/src/styles.css" />
   </head>
 
-  <body>
-    <div id="root"></div>
+  <body class="bg-gray-900 text-white font-sans min-h-screen">
+    <!-- Root container fills full height and is flexible -->
+    <div id="root" class="flex flex-col h-full w-full"></div>
+
+    <!-- Main React JS entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

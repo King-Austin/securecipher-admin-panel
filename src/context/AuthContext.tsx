@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  rotateKey: (reason: string) => Promise<any | null>; // returns dashboard data
   isAuthenticated: boolean;
 }
 
@@ -58,10 +59,36 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsAuthenticated(false);
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("user");
+    localStorage.removeItem("dashboardData");
+  };
+
+  // rotateKey now fetches dashboard data and stores it in localStorage
+  const rotateKey = async (reason: string): Promise<any | null> => {
+    if (!isAuthenticated) return null;
+
+    try {
+      const res = await fetch("http://localhost:8000/api/rotate-key/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason })
+      });
+
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      if (data) {
+        localStorage.setItem("dashboardData", JSON.stringify(data));
+        return data;
+      }
+      return null;
+    } catch (err) {
+      console.error("Rotate key error:", err);
+      return null;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, rotateKey, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

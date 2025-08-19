@@ -5,10 +5,8 @@ const navigationItems = [
   { title: 'Dashboard', url: '/crypto-admin', icon: LayoutDashboard },
   { title: 'Key Management', url: '/crypto-admin/keys', icon: Key },
   { title: 'Transactions', url: '/crypto-admin/transactions', icon: List },
-  { title: 'Analytics', url: '/crypto-admin/analytics', icon: BarChart3 },
   { title: 'Logs', url: '/crypto-admin/logs', icon: FileText },
   { title: 'Security', url: '/crypto-admin/security', icon: Shield },
-  { title: 'Settings', url: '/crypto-admin/settings', icon: Settings }
 ];
 
 export const Sidebar = () => {

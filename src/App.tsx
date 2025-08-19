@@ -5,7 +5,6 @@ import CryptoAdmin from "./pages/CryptoAdmin";
 import Dashboard from "./components/Dashboard";
 import KeyManagement from "./components/KeyManagement";
 import Transactions from "./components/Transactions";
-import Analytics from "./components/Analytics";
 import Security from "./components/Security";
 import Logs from "./components/Logs";
 import { AuthProvider } from "./context/AuthContext";
@@ -17,11 +16,10 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/crypto-admin" element={<CryptoAdmin />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<Dashboard />} /> 
           <Route path="keys" element={<KeyManagement />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="logs" element={<Logs />} />
-          <Route path="analytics" element={<Analytics />} />
           <Route path="security" element={<Security />} />
         </Route>
         <Route path="*" element={<div className="flex items-center justify-center min-h-screen text-xl">Page Not Found</div>} />
